@@ -1,0 +1,36 @@
+{
+  "name": "twcanon",
+  "version": "0.1.0",
+  "description": "Canonicalização de classes Tailwind CSS em uma CLI nativa Rust.",
+  "type": "module",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/Thiagolino8/twcanon.git" },
+  "homepage": "https://github.com/Thiagolino8/twcanon#readme",
+  "bugs": "https://github.com/Thiagolino8/twcanon/issues",
+  "keywords": ["tailwindcss", "canonicalize", "rust", "cli"],
+  "engines": { "node": ">=22" },
+  "bin": { "twcanon": "bin/twcanon.exe" },
+  "files": ["bin", "install.mjs", "targets.json", "licenses", "docs", "LICENSE", "README.md"],
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
+  "scripts": {
+    "postinstall": "node install.mjs",
+    "build": "node scripts/build.mjs",
+    "build:pgo": "node scripts/build.mjs --pgo",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:cli": "python3 tests/cli.py",
+    "test:package": "node scripts/test-package.mjs artifacts",
+    "pack:local": "node scripts/pack.mjs",
+    "release:check": "node scripts/release.mjs artifacts"
+  },
+  "optionalDependencies": {
+    "twcanon-linux-x64-gnu": "0.1.0",
+    "twcanon-linux-x64-musl": "0.1.0",
+    "twcanon-linux-arm64-gnu": "0.1.0",
+    "twcanon-linux-arm64-musl": "0.1.0",
+    "twcanon-darwin-x64": "0.1.0",
+    "twcanon-darwin-arm64": "0.1.0",
+    "twcanon-win32-x64": "0.1.0",
+    "twcanon-win32-arm64": "0.1.0"
+  }
+}

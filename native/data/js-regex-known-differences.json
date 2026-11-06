@@ -1,0 +1,808 @@
+{
+  "scope": "Node 24.21.0/V8 13.6 scoped ignore-case flags with character classes and choices. Matching equivalence is not established for these cases. Syntax and error checks remain strict.",
+  "cases": [
+    {
+      "pattern": "(?-i:\\2\\d??(?-i:\\x+\\x??\\8|.\\8\\s+)??)(?i:(?-i:a*|\\d\\x{1,2}[a-\\d]?)*|(\\8\\d+[^a]??|\ud83d\ude00\\8)??(?<m>\\x|[a-\\d]?[^a]{1,2}))*|(?<m>a+[ab]|[^a]{1,2}(?-i:b|[^a][a-\\d]b){1,2}(?:a?a?))?",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "[ab](?i:\\k<n>(?i:[^a]+[^a]+)??(?<=\\k<n>??\\k<n>?)|\\2*[^a])",
+      "differences": [
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": null
+        }
+      ]
+    },
+    {
+      "pattern": "(?i:b(?-i:[a-\\d]??\\d)*\\2?|(?<m>[a-\\d]\\2|\\s?[^a])+){1,2}|(?-i:b.{1,2}(?:\\8\\d??[a-\\d]|[ab])??)?",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?<n>(?!\\c_??\\d.|\\x[^a]){1,2}(?i:\\8\\2+\\8{1,2}|[ab]*)*)?",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?i:(.{1,2}\\uD83D\\uDE00+\\s{1,2}|b\\uD83D\\uDE00*)??|(?<n>\\c_*|[^a]??)+){1,2}(?!(?i:\\k<n>??\\x{1,2}.*|\\x)+\\8?|\\uD83D\\uDE00??\\8\\c_{1,2})",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "((?i:\\1?\\d?|[ab])+[^a]*(\\s{1,2}[ab]\\1|\\2{1,2})??)(?:(?<=\\s+|\ud83d\ude00\\x))??(?i:(?=\ud83d\ude00\\c_??\\s*){1,2}\\1?(?<m>\\2\\d+\\uD83D\\uDE00+))??",
+      "differences": [
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(\\k<n>{1,2}(?i:\\d{1,2}|[^a]??)*(?-i:\\x*|[ab]{1,2}){1,2}|[^a]{1,2})??\\uD83D\\uDE00?(?<=(?-i:\\k<n>\\2{1,2}[a-\\d]?)|(?i:.+|\\s\\8a*)\\8)|(?i:[ab]?(?!\\x??)??)+(?:(\\uD83D\\uDE00*)*)??(?i:\\8?\\k<n>??(?<n>a{1,2}\\8\\x+|\\uD83D\\uDE00\\1){1,2}|[^a](?i:\\2+|\ud83d\ude00+){1,2}){1,2}",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": null
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": null
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": null
+        },
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": null
+        }
+      ]
+    },
+    {
+      "pattern": "\ud83d\ude00*(?-i:(?-i:b{1,2}\\k<n>??|\\uD83D\\uDE00){1,2})(\\d){1,2}|(?-i:(?i:\\2\\x?a|[^a])??)*",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?<n>[a-\\d]{1,2}(?:\\8*\\x?|[^a]){1,2}|b[a-\\d]\\x+)\\k<n>?|(?i:(\\uD83D\\uDE00?){1,2}|[ab]*)",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?<m>(?:[^a]\\k<n>+\\2?))(?i:\\x??(?!\\c_?)*(\\c_*\\k<n>\\s{1,2}|\\uD83D\\uDE00+)?|(\ud83d\ude00\\s*\\k<n>?|[a-\\d][^a]?[ab]{1,2})??(?<m>\\uD83D\\uDE00+))|((?<n>[ab]*a*|\\x)\\2{1,2})*(?<!(?i:\\8?[ab]{1,2})b(?=b+[a-\\d]*|\\d)*)",
+      "differences": [
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            2
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?i:([^a]{1,2}\\8?|\\8??)?(?i:\\c_\\1|[a-\\d]{1,2}\\k<n>{1,2}[^a]+)|(?<n>\\1[ab]??[a-\\d]|\\1a.)(?!.+a[^a]{1,2}|a+){1,2}(?i:\\s?)?)",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": null,
+          "rust": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?-i:(?-i:\\1{1,2}[ab]\\1+|\\uD83D\\uDE00??\\k<n>*a)(?:\\s\\s+.?|\\8?)?\\2{1,2}|\\k<n>*)|(?i:(?=\\uD83D\\uDE00??\\x{1,2}.*|b+\\1{1,2})\\k<n>|[ab])(?:(?![^a]\\8)(?-i:.{1,2}.??|[ab]*))+",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": null,
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "[ab]|(?i:[^a]??(\\c_\\x{1,2}[ab]|a\\1)).{1,2}",
+      "differences": [
+        {
+          "haystack": "AA",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?i:(\\8+\\d?\\k<n>{1,2}|\ud83d\ude00)(?<m>.{1,2}|\\8\\s?\\1*)?(?<n>\\8|\\c_a{1,2}\\2+)*|([ab]){1,2}[ab]+)+[a-\\d]?(?-i:a??|(?!\ud83d\ude00\\1??a)??(?<!a*))",
+      "differences": [
+        {
+          "haystack": "AA",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "aA",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": null,
+          "rust": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "\\k<n>(?<![a-\\d](?=a\\x*)(?<m>\\d??a|\\k<n>){1,2}|(?:\\c_[a-\\d]??)?\\8)(?<n>(?!\ud83d\ude00+a\ud83d\ude00??|[a-\\d]*.+)a|\\k<n>+(?i:a?))*|(?:(?-i:.\\8\\x)){1,2}(?-i:\\8?(?:\\s{1,2}a??)*b+){1,2}",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "aA",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?!(?i:\\d+|[a-\\d]){1,2}[ab](?i:\\2|\ud83d\ude00{1,2})*){1,2}",
+      "differences": [
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            1,
+            1
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            0
+          ],
+          "rust": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?-i:[a-\\d]|(?i:[^a]?|\\1*b?\ud83d\ude00+)+(?-i:\\x{1,2}\\x\\d|a+\\c_)*(?:a??)?)(?i:(?-i:\\1){1,2}(?<n>\ud83d\ude00\\2??\\8+|\\uD83D\\uDE00)?(\ud83d\ude00\\1+)??|(.??[a-\\d]{1,2}[a-\\d]+|\\2\\2?\\8)+)+",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            2
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            0,
+            1
+          ],
+          "rust": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "(?i:(\\xb+){1,2}(?<m>\\uD83D\\uDE00)+|[ab])|(?:(?-i:[^a])*(?!\\s+|\\1+b?)*)\ud83d\ude00??",
+      "differences": [
+        {
+          "haystack": "A",
+          "node": null,
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AA",
+          "node": null,
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "Aa",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "AB",
+          "node": null,
+          "rust": [
+            0,
+            1
+          ]
+        },
+        {
+          "haystack": "Ab",
+          "node": [
+            1,
+            2
+          ],
+          "rust": [
+            0,
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+name: Validação e publicação
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy
+      - run: node scripts/check.mjs
+
+  native:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix: &platforms
+        include:
+          - runner: ubuntu-24.04
+            id: linux-x64-gnu
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04
+            id: linux-x64-musl
+            target: x86_64-unknown-linux-musl
+            musl: true
+          - runner: ubuntu-24.04-arm
+            id: linux-arm64-gnu
+            target: aarch64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            id: linux-arm64-musl
+            target: aarch64-unknown-linux-musl
+            musl: true
+          - runner: macos-15-intel
+            id: darwin-x64
+            target: x86_64-apple-darwin
+          - runner: macos-15
+            id: darwin-arm64
+            target: aarch64-apple-darwin
+          - runner: windows-latest
+            id: win32-x64
+            target: x86_64-pc-windows-msvc
+          - runner: windows-11-arm
+            id: win32-arm64
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '13.0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - if: matrix.musl
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: rustup toolchain install 1.99.1 --profile minimal --component llvm-tools-preview
+      - run: rustup target add --toolchain 1.99.1 ${{ matrix.target }}
+      - if: startsWith(matrix.id, 'win32-')
+        run: node --test tests/install.test.mjs
+      - run: node scripts/build.mjs --pgo --target ${{ matrix.target }}
+      - run: node scripts/pack.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.id }}
+          path: artifacts/twcanon-${{ matrix.id }}-*.tgz
+          if-no-files-found: error
+      - if: matrix.id == 'linux-x64-gnu'
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-package
+          path: artifacts/twcanon-[0-9]*.tgz
+          if-no-files-found: error
+
+  assemble:
+    needs: native
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          path: artifacts
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: main-package
+          path: artifacts
+      - run: node scripts/release.mjs artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-packages
+          path: artifacts/*.tgz
+
+  install:
+    needs: assemble
+    strategy:
+      fail-fast: false
+      matrix: *platforms
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-packages
+          path: artifacts
+      - if: ${{ !matrix.musl }}
+        run: node scripts/test-package.mjs artifacts
+      - if: matrix.musl
+        run: docker run --rm -v "$PWD:/work" -w /work node:24-alpine node scripts/test-package.mjs artifacts
+
+  managers:
+    needs: assemble
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '12.8.1'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-packages
+          path: artifacts
+      - run: python3 tests/managers.py
+        env:
+          TEST_MANAGERS: npm,pnpm,bun
+
+  release-check:
+    if: ${{ always() }}
+    needs: [check, assemble, install, managers]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: node -e 'if (Object.values(JSON.parse(process.env.RESULTS)).some(job => job.result !== "success")) process.exit(1)'
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: release-check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: npm-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-packages
+          path: artifacts
+      - run: node scripts/release.mjs artifacts --publish

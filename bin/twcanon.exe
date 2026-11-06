@@ -1,0 +1,2 @@
+echo 'Binário Rust ausente. Execute node node_modules/twcanon/install.mjs após permitir dependências opcionais.' >&2
+exit 1

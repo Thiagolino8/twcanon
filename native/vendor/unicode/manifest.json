@@ -1,0 +1,12 @@
+{
+  "version": "17.0.0",
+  "node": "24.21.0",
+  "sources": {
+    "CaseFolding-17.0.0.txt": "https://www.unicode.org/Public/17.0.0/ucd/CaseFolding.txt",
+    "LICENSE": "https://www.unicode.org/license.txt"
+  },
+  "files": {
+    "CaseFolding-17.0.0.txt": "ff8d8fefbf123574205085d6714c36149eb946d717a0c585c27f0f4ef58c4183",
+    "LICENSE": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+  }
+}

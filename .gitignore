@@ -1,0 +1,11 @@
+/node_modules/
+/artifacts/
+/dist/
+/build/
+/native/target/
+/native/fixtures/*.json
+!/native/fixtures/manifest.json
+/.cache/
+*.profraw
+*.profdata
+__pycache__/

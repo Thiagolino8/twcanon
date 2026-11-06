@@ -1,0 +1,27 @@
+{
+  "node": "v24.21.0",
+  "v8": "13.6.233.17-node.53",
+  "source": "https://github.com/nodejs/node/blob/v24.21.0/deps/v8/third_party/v8/builtins/array-sort.tq",
+  "python_license": "https://github.com/python/cpython/blob/v3.6.4/LICENSE",
+  "files": {
+    "array-sort.tq": "2ac3d8fc187e4f5096afb153d018390e2b250cde3e36badafe89da3faeebe55e",
+    "LICENSE": "6ab33af8774a0f396ee3aeeb761e3229057682d6f9fa7f572e390c2cb3a6e509",
+    "LICENSE.python": "d2d17b17388da74dc9c6bdbf78eb7237432c3f8a0c87852df740ec99de2ec680",
+    "regexp-parser.cc": "443127384a169615abb1e384be68d8102f76754c7294823fed4e3c8cefb3572c",
+    "regexp-error.h": "0cda73e657e33d335a49ac298b9fcc44bbc0465f499e965d41dad7ae38cfc46d",
+    "regexp-compiler.cc": "c856ba1d757521ebaa60d1e564ebc4ad9358c443d15d5a7e00336e2a527da6de",
+    "regexp-compiler.h": "79d7de1714c7a0a941b31ca2cc8ce44a7a5c37e0410a72e18013651213bb8ca3",
+    "regexp-compiler-tonode.cc": "4d63808dfcb57435debe37b6f9b73386a8a520cfb70fc787c6ba0c82eb0e0b47",
+    "regexp-nodes.h": "f24e4154eb0b29fad1a184c7e9ffb39dbd4affcc47233acf444b607f53080d8f",
+    "regexp.cc": "a44f319e5157231299f1f4c3acbab2f1ffb458aee00d923bd882f6d2b70466fa"
+  },
+  "regexp_sources": {
+    "regexp-parser.cc": "https://github.com/nodejs/node/blob/v24.21.0/deps/v8/src/regexp/regexp-parser.cc",
+    "regexp-error.h": "https://github.com/nodejs/node/blob/v24.21.0/deps/v8/src/regexp/regexp-error.h",
+    "regexp-compiler.cc": "https://raw.githubusercontent.com/nodejs/node/v24.21.0/deps/v8/src/regexp/regexp-compiler.cc",
+    "regexp-compiler.h": "https://raw.githubusercontent.com/nodejs/node/v24.21.0/deps/v8/src/regexp/regexp-compiler.h",
+    "regexp-compiler-tonode.cc": "https://raw.githubusercontent.com/nodejs/node/v24.21.0/deps/v8/src/regexp/regexp-compiler-tonode.cc",
+    "regexp-nodes.h": "https://raw.githubusercontent.com/nodejs/node/v24.21.0/deps/v8/src/regexp/regexp-nodes.h",
+    "regexp.cc": "https://raw.githubusercontent.com/nodejs/node/v24.21.0/deps/v8/src/regexp/regexp.cc"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "reference": {
+    "node": "24.21.0",
+    "v8": "13.6.233.17-node.53",
+    "platform": "linux",
+    "arch": "x64",
+    "node_sha256": "7fde7b8afa198da66257f42ee2001d874c7355631e6d1579a5fb5ef1f246df4c",
+    "flags": [
+      "--regexp-interpret-all",
+      "--stack-size=984"
+    ],
+    "harness": "scripts/regex-resource-oracle.mjs",
+    "harness_sha256": "fb588ecb61fdb48fb2b2ba5f4d75a1797684cb0756e569df2b4913c8a1fe282f"
+  },
+  "analysis_stack": {
+    "available": 999032,
+    "analysis_frame": 56,
+    "stack_check_frame": 16,
+    "text_choice": 80,
+    "loop_choice": 64,
+    "action_assertion_backreference": 48,
+    "negative_submatch": 96
+  },
+  "scope": "Fixed Linux x64 reference ABI and one fresh Node process per query; not a host-independent V8 resource limit.",
+  "measurement": {
+    "symbol": "v8::internal::Analysis::AnalyzeRegExp",
+    "address": "0x1388850",
+    "entry_available_expression": "(long)$rsp-*(long*)($rdi+16)",
+    "log": "build/regex-current/resource-profile/resource-gdb-fixed.log",
+    "log_sha256": "b82da368c5a6daab612d87c2afc12bd5d0d4b603253cf01a06101400e2ac0adc"
+  }
+}

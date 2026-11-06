@@ -1,0 +1,18 @@
+--- a/src/classicalbacktrack.rs
++++ b/src/classicalbacktrack.rs
+@@ -924,8 +924,14 @@
+                     }
+ 
+                     Insn::EnterLoop(fields) => {
++                        // Preserve the enclosing iteration when backtracking into a nested loop.
+                         // Entering a loop, not re-entering it.
+-                        self.s.loops.mat(fields.loop_id as usize).iters = 0;
++                        let loop_data = self.s.loops.mat(fields.loop_id as usize);
++                        self.bts.push(BacktrackInsn::SetLoopData {
++                            id: fields.loop_id,
++                            data: *loop_data,
++                        });
++                        loop_data.iters = 0;
+                         match self.run_loop(fields, pos, ip) {
+                             Some(next_ip) => {
+                                 ip = next_ip;
