@@ -65,7 +65,7 @@ O CSS padrão é `src/index.css`. Os caminhos são arquivos ou diretórios dentr
 - Usa `rem = 16`, combinação de utilitários e conversão de propriedades lógicas para físicas, conforme o fluxo para o qual foi desenvolvido. Avalie essa conversão se o projeto depender de escrita RTL ou vertical.
 - Mantém cache em `.cache/twcanon.json`, invalidado pelo executável, conteúdo do CSS e resolução dos imports. `CI` ou `--no-cache` desativam leitura e escrita desse cache. É seguro remover o diretório; valores acumulados não têm poda automática.
 - Planeja as alterações e valida sintaxe e acesso de escrita antes de gravar. Cada arquivo é substituído por rename atômico. O lote inteiro não é atômico: uma falha de I/O informa quais arquivos já foram alterados.
-- Recusa correção em arquivos somente leitura e caminhos com symlink. A substituição não preserva identidade de hardlinks, proprietário ou atributos estendidos. Existe uma janela entre a checagem e o rename; evite editar os mesmos arquivos simultaneamente.
+- Recusa correção em arquivos somente leitura e em caminhos com symlink abaixo do diretório atual. A substituição não preserva identidade de hardlinks, proprietário ou atributos estendidos. Existe uma janela entre a checagem e o rename; evite editar os mesmos arquivos simultaneamente.
 - Recusa texto não UTF-8 e surrogate UTF-16 isolado com indicação de arquivo e linha. Não substitui dados inválidos silenciosamente.
 
 ## Compatibilidade

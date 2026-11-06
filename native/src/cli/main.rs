@@ -109,10 +109,10 @@ fn run() -> Result<u8, String> {
     // Parsing and canonicalization must succeed for the entire batch before writing.
     if !options.check {
         for (path, source, _) in &plans {
-            files::unchanged(path, source)?;
+            files::unchanged(&root, path, source)?;
         }
         for (index, (path, source, plan)) in plans.iter().enumerate() {
-            if let Err(error) = files::unchanged(path, source)
+            if let Err(error) = files::unchanged(&root, path, source)
                 .and_then(|()| files::write(path, plan.text.as_bytes()))
             {
                 if index == 0 {

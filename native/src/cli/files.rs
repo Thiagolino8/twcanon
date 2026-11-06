@@ -54,6 +54,19 @@ fn scan(directory: &Path, files: &mut Vec<PathBuf>) -> Result<(), String> {
     Ok(())
 }
 
+fn is_canonical(root: &Path, path: &Path) -> bool {
+    let Ok(relative) = path.strip_prefix(root) else {
+        return false;
+    };
+    let Ok(root) = root.canonicalize() else {
+        return false;
+    };
+    // No Windows, a raiz canônica usa caminhos estendidos e expande nomes curtos.
+    // O sufixo fica sem resolução para continuar recusando links abaixo da raiz.
+    path.canonicalize()
+        .is_ok_and(|actual| actual == root.join(relative))
+}
+
 pub fn sources(root: &Path, targets: &[PathBuf]) -> Result<Vec<PathBuf>, String> {
     let source_root = root.join("src");
     let direct = !targets.is_empty()
@@ -61,7 +74,7 @@ pub fn sources(root: &Path, targets: &[PathBuf]) -> Result<Vec<PathBuf>, String>
             path.starts_with(&source_root)
                 && source(path)
                 && fs::symlink_metadata(path).is_ok_and(|metadata| metadata.is_file())
-                && path.canonicalize().is_ok_and(|actual| actual == *path)
+                && is_canonical(root, path)
         });
     let mut files = if direct {
         targets.to_vec()
@@ -94,10 +107,10 @@ pub fn has_classes(source: &str) -> bool {
         })
 }
 
-pub fn unchanged(path: &Path, original: &str) -> Result<(), String> {
+pub fn unchanged(root: &Path, path: &Path, original: &str) -> Result<(), String> {
     let metadata = fs::symlink_metadata(path)
         .map_err(|error| format!("Falha ao ler {}: {error}", path.display()))?;
-    if metadata.is_symlink() || path.canonicalize().ok().as_deref() != Some(path) {
+    if metadata.is_symlink() || !is_canonical(root, path) {
         return Err(format!(
             "Correção recusada em caminho com symlink ou não canônico: {}",
             path.display()

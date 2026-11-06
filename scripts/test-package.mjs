@@ -40,10 +40,19 @@ try {
   await fs.writeFile(path.join(root, 'src/index.css'), '@tailwind utilities;');
   const source = path.join(root, 'src/a.tsx');
   await fs.writeFile(source, 'cn("flex-grow");');
-  assert.equal(run(['--check']).status, 1);
-  assert.equal(run([]).status, 0);
+  const check = run(['--check']);
+  assert.equal(check.status, 1, check.stderr);
+  const fix = run([]);
+  assert.equal(fix.status, 0, fix.stderr);
   assert.equal(await fs.readFile(source, 'utf8'), 'cn("grow");');
-  assert.equal(run(['--check']).status, 0);
+  const clean = run(['--check']);
+  assert.equal(clean.status, 0, clean.stderr);
+  await fs.writeFile(source, 'cn("flex-grow");');
+  const targetedCheck = run(['--check', source]);
+  assert.equal(targetedCheck.status, 1, targetedCheck.stderr);
+  const targetedFix = run([source]);
+  assert.equal(targetedFix.status, 0, targetedFix.stderr);
+  assert.equal(await fs.readFile(source, 'utf8'), 'cn("grow");');
   console.log(`Instalação e execução sem Node no PATH: ${target.id}, OK.`);
 } finally {
   await fs.rm(root, { recursive: true, force: true });
