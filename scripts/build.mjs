@@ -35,6 +35,13 @@ if (metadata.packages.find(pkg => pkg.name === 'tailwind-canonical-native')?.ver
 const environment = { ...process.env };
 delete environment.RUSTFLAGS;
 delete environment.CARGO_ENCODED_RUSTFLAGS;
+const host = capture('rustc', ['-vV']).match(/^host: (.+)$/m)?.[1];
+if (pgo && process.platform === 'win32' && (target ?? host) === 'aarch64-pc-windows-msvc') {
+  // link.exe desalinha os marcadores de perfil no Windows arm64; rust-lld preserva o alinhamento.
+  const linker = path.join(capture('rustc', ['--print', 'sysroot']), 'lib/rustlib', host, 'bin/rust-lld.exe');
+  await fs.access(linker);
+  environment.CARGO_TARGET_AARCH64_PC_WINDOWS_MSVC_LINKER = linker;
+}
 const buildDirectory = path.join(native, 'target');
 const executable = (...directories) => path.join(...directories, ...(target ? [target] : []), 'release', `twcanon${process.platform === 'win32' ? '.exe' : ''}`);
 let profile;
@@ -65,7 +72,6 @@ if (pgo) {
     if (child.error) throw child.error;
     if (child.status !== 1) throw new Error(`Treinamento PGO terminou com status ${child.status}; esperado: 1.`);
   }
-  const host = capture('rustc', ['-vV']).match(/^host: (.+)$/m)?.[1];
   const suffix = process.platform === 'win32' ? '.exe' : '';
   const profdata = path.join(capture('rustc', ['--print', 'sysroot']), 'lib/rustlib', host, 'bin', `llvm-profdata${suffix}`);
   const profiles = (await fs.readdir(raw)).filter(name => name.startsWith('cli-') && name.endsWith('.profraw')).map(name => path.join(raw, name));
@@ -79,7 +85,7 @@ const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 await fs.mkdir(path.join(root, 'build'), { recursive: true });
 await fs.writeFile(path.join(root, 'build/build.json'), JSON.stringify({
   binary: path.relative(root, binary), sha256: sha256(await fs.readFile(binary)),
-  toolchain: capture('rustc', ['--version']), target: target ?? capture('rustc', ['-vV']).match(/^host: (.+)$/m)?.[1],
+  toolchain: capture('rustc', ['--version']), target: target ?? host,
   pgo: Boolean(profile), profile_sha256: profile ? sha256(await fs.readFile(profile)) : null,
   training: profile ? 'Synthetic utility/variant/collapse cases, three CLI passes, no persistent cache.' : null,
 }, null, 2) + '\n');
