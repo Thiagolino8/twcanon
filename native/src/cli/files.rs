@@ -22,6 +22,20 @@ pub fn absolute(base: &Path, path: &Path) -> PathBuf {
             part => result.push(part.as_os_str()),
         }
     }
+    if !result.starts_with(base)
+        && let Ok(canonical_base) = base.canonicalize()
+    {
+        let ancestors: Vec<_> = result.ancestors().collect();
+        for alias in ancestors.into_iter().rev() {
+            if alias
+                .canonicalize()
+                .is_ok_and(|actual| actual == canonical_base)
+            {
+                // Resolve só o alias da raiz; mantém links no sufixo visíveis às validações.
+                return base.join(result.strip_prefix(alias).unwrap());
+            }
+        }
+    }
     result
 }
 

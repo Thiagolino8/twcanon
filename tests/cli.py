@@ -131,6 +131,42 @@ class Cli(unittest.TestCase):
         self.assertNotIn("link.tsx", result.stdout)
         self.assertEqual(self.run_cli("--check", "src/missing.ts").returncode, 0)
 
+    @unittest.skipUnless(os.name == "posix", "requires directory symlinks")
+    def test_absolute_targets_accept_root_alias_but_skip_source_links(self):
+        self.put("src/index.css", "@tailwind utilities;")
+        file = self.put("src/example.tsx", 'cn("flex-grow");')
+        nested = self.put("src/nested/example.tsx", 'cn("flex-grow");')
+        with tempfile.TemporaryDirectory(prefix="tw-cli-root-alias-") as directory:
+            alias = Path(directory) / "project"
+            alias.symlink_to(self.root, target_is_directory=True)
+            outside_directory = Path(directory) / "outside"
+            outside_directory.mkdir()
+            outside = outside_directory / "example.tsx"
+            outside.write_text('cn("flex-grow");')
+            (self.root / "src/link.tsx").symlink_to(outside)
+            (self.root / "src/linked").symlink_to(outside_directory, target_is_directory=True)
+            (self.root / "src/rootlink").symlink_to(self.root, target_is_directory=True)
+            for name in ["src/rootlink/src/example.tsx", "src/rootlink/src"]:
+                for args in [("--check", str(alias / name)), (str(alias / name),)]:
+                    result = self.run_cli(*args, ci=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(file.read_text(), 'cn("flex-grow");')
+                    self.assertEqual(nested.read_text(), 'cn("flex-grow");')
+            target = str(alias / "src/example.tsx")
+            result = self.run_cli("--check", target, ci=True)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            result = self.run_cli(target, ci=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(file.read_text(), 'cn("grow");')
+            self.assertEqual(nested.read_text(), 'cn("flex-grow");')
+            result = self.run_cli(str(alias / "src/nested"), ci=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(nested.read_text(), 'cn("grow");')
+            for name in ["src/link.tsx", "src/linked/example.tsx"]:
+                result = self.run_cli(str(alias / name), ci=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(outside.read_text(), 'cn("flex-grow");')
+
     def test_plain_batch_and_invalid_flags_do_not_require_css(self):
         self.put("src/plain.ts", "export const value = 1;")
         self.put("src/lib/tailwind-merge.ts", 'cn("flex-grow");')
