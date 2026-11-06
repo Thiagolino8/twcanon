@@ -12,7 +12,7 @@ test('selects all supported platforms and rejects unknown architectures', () => 
     assert.equal(selectTarget('linux', cpu, '2.35').id, `linux-${cpu}-gnu`);
     assert.equal(selectTarget('linux', cpu).id, `linux-${cpu}-musl`);
     assert.equal(selectTarget('darwin', cpu).id, `darwin-${cpu}`);
-    assert.equal(selectTarget('win32', cpu).id, `win32-${cpu}`);
+    assert.equal(selectTarget('win32', cpu).id, `windows-${cpu}`);
   }
   assert.throws(() => selectTarget('linux', 'ia32', '2.35'), /Plataforma sem binário/);
   assert.throws(() => selectTarget('freebsd', 'x64'), /Plataforma sem binário/);

@@ -48,10 +48,10 @@ jobs:
             id: darwin-arm64
             target: aarch64-apple-darwin
           - runner: windows-latest
-            id: win32-x64
+            id: windows-x64
             target: x86_64-pc-windows-msvc
           - runner: windows-11-arm
-            id: win32-arm64
+            id: windows-arm64
             target: aarch64-pc-windows-msvc
     runs-on: ${{ matrix.runner }}
     env:
@@ -65,7 +65,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y musl-tools
       - run: rustup toolchain install 1.99.1 --profile minimal --component llvm-tools-preview
       - run: rustup target add --toolchain 1.99.1 ${{ matrix.target }}
-      - if: startsWith(matrix.id, 'win32-')
+      - if: runner.os == 'Windows'
         run: node --test tests/install.test.mjs
       - run: node scripts/build.mjs --pgo --target ${{ matrix.target }}
       - run: node scripts/pack.mjs

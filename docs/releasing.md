@@ -13,6 +13,8 @@ A criação deste repositório local não reserva nomes nem publica pacotes.
 
 Atualize a versão raiz e todas as `optionalDependencies`, além de `native/Cargo.toml` e da entrada correspondente em `native/Cargo.lock`. Preserve versões idênticas entre o pacote principal e os nativos.
 
+Os pacotes Windows se chamam `twcanon-windows-x64` e `twcanon-windows-arm64`. O campo `os` permanece `win32`, como exige o npm; os alvos Rust continuam usando MSVC.
+
 Execute `node scripts/check.mjs`. Envie a mudança e aguarde o CI. A tag `v<versão>`, apontando para a mudança validada, aciona o mesmo workflow com permissão OIDC de publicação.
 
 O CI compila os oito alvos com Rust fixado e PGO sintético, testa os tarballs, valida formato e hash dos executáveis e só então publica. O pacote principal sai por último. Uma versão npm é imutável: a retomada aceita um pacote já publicado somente se seu `dist.integrity` for igual ao tarball validado; caso contrário, aborta.

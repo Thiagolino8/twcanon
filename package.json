@@ -1,6 +1,6 @@
 {
   "name": "twcanon",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Canonicalização de classes Tailwind CSS em uma CLI nativa Rust.",
   "type": "module",
   "license": "MIT",
@@ -24,13 +24,13 @@
     "release:check": "node scripts/release.mjs artifacts"
   },
   "optionalDependencies": {
-    "twcanon-linux-x64-gnu": "0.1.0",
-    "twcanon-linux-x64-musl": "0.1.0",
-    "twcanon-linux-arm64-gnu": "0.1.0",
-    "twcanon-linux-arm64-musl": "0.1.0",
-    "twcanon-darwin-x64": "0.1.0",
-    "twcanon-darwin-arm64": "0.1.0",
-    "twcanon-win32-x64": "0.1.0",
-    "twcanon-win32-arm64": "0.1.0"
+    "twcanon-linux-x64-gnu": "0.1.1",
+    "twcanon-linux-x64-musl": "0.1.1",
+    "twcanon-linux-arm64-gnu": "0.1.1",
+    "twcanon-linux-arm64-musl": "0.1.1",
+    "twcanon-darwin-x64": "0.1.1",
+    "twcanon-darwin-arm64": "0.1.1",
+    "twcanon-windows-x64": "0.1.1",
+    "twcanon-windows-arm64": "0.1.1"
   }
 }
