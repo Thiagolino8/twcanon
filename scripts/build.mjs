@@ -79,7 +79,16 @@ if (pgo) {
   profile = path.join(root, 'build/pgo/training.profdata');
   run(profdata, ['merge', '-o', profile, ...profiles]);
 }
-run('cargo', base, { env: { ...environment, CARGO_TARGET_DIR: buildDirectory, CARGO_ENCODED_RUSTFLAGS: profile ? [`-Cprofile-use=${profile}`, '-Cllvm-args=-pgo-warn-missing-function'].join('\u001f') : '' } });
+// Limita a duplicação de código pelo PGO para preservar o tamanho do binário.
+const rustflags = profile ? [
+  `-Cprofile-use=${profile}`,
+  '-Cllvm-args=-pgo-warn-missing-function',
+  '-Cllvm-args=-hot-callsite-threshold=25',
+  '-Cllvm-args=-inline-threshold=25',
+  '-Cllvm-args=-inlinehint-threshold=25',
+  '-Cllvm-args=-unroll-threshold=50',
+] : [];
+run('cargo', base, { env: { ...environment, CARGO_TARGET_DIR: buildDirectory, CARGO_ENCODED_RUSTFLAGS: rustflags.join('\u001f') } });
 const binary = executable(buildDirectory);
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 await fs.mkdir(path.join(root, 'build'), { recursive: true });
@@ -87,6 +96,7 @@ await fs.writeFile(path.join(root, 'build/build.json'), JSON.stringify({
   binary: path.relative(root, binary), sha256: sha256(await fs.readFile(binary)),
   toolchain: capture('rustc', ['--version']), target: target ?? host,
   pgo: Boolean(profile), profile_sha256: profile ? sha256(await fs.readFile(profile)) : null,
+  rustflags,
   training: profile ? 'Synthetic utility/variant/collapse cases, three CLI passes, no persistent cache.' : null,
 }, null, 2) + '\n');
 console.log(binary);

@@ -6,6 +6,25 @@
   },
   "components": [
     {
+      "name": "adler2",
+      "version": "2.0.1",
+      "license": "0BSD OR MIT OR Apache-2.0",
+      "files": [
+        {
+          "file": "adler2-2.0.1-LICENSE-0BSD",
+          "sha256": "861399f8c21c042b110517e76dc6b63a2b334276c8cf17412fc3c8908ca8dc17"
+        },
+        {
+          "file": "adler2-2.0.1-LICENSE-APACHE",
+          "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb"
+        },
+        {
+          "file": "adler2-2.0.1-LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
       "name": "aho-corasick",
       "version": "1.1.5",
       "license": "Unlicense OR MIT",
@@ -474,6 +493,29 @@
       ]
     },
     {
+      "name": "miniz_oxide",
+      "version": "0.9.1",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "files": [
+        {
+          "file": "miniz_oxide-0.9.1-LICENSE",
+          "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b"
+        },
+        {
+          "file": "miniz_oxide-0.9.1-LICENSE-APACHE.md",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "file": "miniz_oxide-0.9.1-LICENSE-MIT.md",
+          "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+        },
+        {
+          "file": "miniz_oxide-0.9.1-LICENSE-ZLIB.md",
+          "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39"
+        }
+      ]
+    },
+    {
       "name": "nonmax",
       "version": "0.5.5",
       "license": "MIT OR Apache-2.0",
@@ -817,6 +859,21 @@
         },
         {
           "file": "regex-automata-0.4.18-LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ]
+    },
+    {
+      "name": "regex-lite",
+      "version": "0.1.9",
+      "license": "MIT OR Apache-2.0",
+      "files": [
+        {
+          "file": "regex-lite-0.1.9-LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "file": "regex-lite-0.1.9-LICENSE-MIT",
           "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
         }
       ]

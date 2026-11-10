@@ -8,6 +8,13 @@ pub struct Collation {
 }
 
 impl Collation {
+    // Inglês usa a colação raiz; evita vincular os dados das outras localidades à CLI.
+    pub(crate) fn english() -> Self {
+        Self {
+            collator: CollatorBorrowed::new_root(CollatorOptions::default()),
+        }
+    }
+
     pub fn new(locale: &str) -> Result<Self, String> {
         let locale: Locale = locale
             .parse()
@@ -86,4 +93,53 @@ pub fn natural(left: &str, right: &str) -> Ordering {
         }
     }
     left.len().cmp(&right.len())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Collation;
+    use serde::Deserialize;
+
+    #[test]
+    fn root_collation_matches_english() {
+        #[derive(Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        struct Fixture {
+            compare_cases: Vec<Case>,
+        }
+        #[derive(Deserialize)]
+        struct Case {
+            left: String,
+            right: String,
+        }
+
+        let fixture: Fixture =
+            serde_json::from_str(include_str!("../fixtures/compare.json")).unwrap();
+        let english = Collation::english();
+        for locale in ["en", "en-US"] {
+            let reference = Collation::new(locale).unwrap();
+            for case in &fixture.compare_cases {
+                assert_eq!(
+                    english.compare(&case.left, &case.right),
+                    reference.compare(&case.left, &case.right),
+                    "{locale}: {:?} vs {:?}",
+                    case.left,
+                    case.right,
+                );
+            }
+            let values = [
+                "a", "A", "á", "ä", "å", "æ", "ß", "İ", "ı", "ﬀ", "é", "e\u{301}", "α", "я", "ع",
+                "א", "क", "中", "中文", "日", "あ", "ア", "한", "😀", "𐐀", "-", "_", "1", "10",
+            ];
+            for left in values {
+                for right in values {
+                    assert_eq!(
+                        english.compare(left, right),
+                        reference.compare(left, right),
+                        "{locale}: {left:?} vs {right:?}",
+                    );
+                }
+            }
+        }
+    }
 }

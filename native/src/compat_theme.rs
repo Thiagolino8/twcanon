@@ -29,8 +29,12 @@ struct Property {
     value: Expression,
 }
 static DEFINITIONS: LazyLock<Definitions> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../data/compat-theme.json"))
-        .expect("pinned compatibility theme definitions")
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/compat-theme.json.deflate"
+    )))
+    .expect("falha ao descomprimir as definições do tema de compatibilidade");
+    serde_json::from_slice(&bytes).expect("pinned compatibility theme definitions")
 });
 
 #[derive(Clone)]

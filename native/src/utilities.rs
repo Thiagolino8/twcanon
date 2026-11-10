@@ -125,8 +125,13 @@ struct Builtins {
 }
 
 static BUILTINS: LazyLock<Builtins> = LazyLock::new(|| {
-    let data: Data = serde_json::from_str(include_str!("../data/utilities.json"))
-        .expect("built-in utility definitions must be valid");
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/utilities.json.deflate"
+    )))
+    .expect("falha ao descomprimir as definições de utilitários");
+    let data: Data =
+        serde_json::from_slice(&bytes).expect("built-in utility definitions must be valid");
     let marker_start = data.token.chars().next().expect("nonempty value marker");
     assert!(
         data.bindings

@@ -1,17 +1,30 @@
 // Numeric serialization must match ECMAScript, including exponent thresholds and -0.
-use regex::Regex;
-use std::sync::LazyLock;
-
 pub fn format(value: f64) -> String {
     ryu_js::Buffer::new().format(value).to_owned()
 }
 
 pub fn dimension(input: &str) -> Option<(f64, Option<&str>)> {
-    static PATTERN: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"^([-+]?(?:[0-9]*\.)?[0-9]+)([a-zA-Z]+|%)?$").unwrap());
-    let captures = PATTERN.captures(input)?;
-    let value = captures[1].parse::<f64>().ok()?;
-    (!value.is_nan()).then(|| (value, captures.get(2).map(|c| c.as_str())))
+    let unsigned = input.strip_prefix(['-', '+']).unwrap_or(input);
+    let mut length = unsigned.bytes().take_while(u8::is_ascii_digit).count();
+    if unsigned.as_bytes().get(length) == Some(&b'.') {
+        length += 1;
+        let fraction = unsigned[length..]
+            .bytes()
+            .take_while(u8::is_ascii_digit)
+            .count();
+        if fraction == 0 {
+            return None;
+        }
+        length += fraction;
+    } else if length == 0 {
+        return None;
+    }
+    let unit = &unsigned[length..];
+    if unit != "%" && !unit.bytes().all(|byte| byte.is_ascii_alphabetic()) {
+        return None;
+    }
+    let number = input[..input.len() - unit.len()].parse().ok()?;
+    Some((number, (!unit.is_empty()).then_some(unit)))
 }
 
 pub fn is_positive_integer(value: &str) -> bool {
@@ -76,4 +89,54 @@ pub fn round_fixed(value: f64, digits: u32) -> f64 {
     )
     .parse()
     .unwrap()
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn dimension_preserves_numeric_grammar() {
+        let reference = regex::Regex::new(r"^([-+]?(?:[0-9]*\.)?[0-9]+)([a-zA-Z]+|%)?$").unwrap();
+        let overflow = "9".repeat(400);
+        for number in [
+            "",
+            "-",
+            "+",
+            ".",
+            ".5",
+            "+.5",
+            "-.5",
+            "0",
+            "-0",
+            "+0",
+            "01",
+            "0001",
+            "1.0",
+            "-001.25",
+            "1.",
+            "1e3",
+            "1.2.3",
+            "NaN",
+            "Infinity",
+            "١",
+            "1\n",
+            "\u{feff}1",
+            "1\0",
+            &overflow,
+        ] {
+            for unit in [
+                "", "px", "REM", "%", "e", "e3", "px%", "px\n", " px", "-px", "π", "\u{a0}",
+            ] {
+                let input = format!("{number}{unit}");
+                let expected = reference.captures(&input).and_then(|captures| {
+                    let value = captures[1].parse::<f64>().ok()?;
+                    Some((
+                        value.to_bits(),
+                        captures.get(2).map(|capture| capture.as_str()),
+                    ))
+                });
+                let actual = super::dimension(&input).map(|(value, unit)| (value.to_bits(), unit));
+                assert_eq!(actual, expected, "{input:?}");
+            }
+        }
+    }
 }

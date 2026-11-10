@@ -627,7 +627,13 @@ fn literal_tree(atom: Vec<Literal>) -> Tree {
 
 fn fold_key(code: u16, flags: u8) -> Vec<u16> {
     static FOLDING: LazyLock<BTreeMap<u16, Vec<u16>>> = LazyLock::new(|| {
-        include_str!("../../vendor/unicode/CaseFolding-17.0.0.txt")
+        let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+            env!("OUT_DIR"),
+            "/CaseFolding-17.0.0.txt.deflate"
+        )))
+        .expect("falha ao descomprimir os dados Unicode de case folding");
+        std::str::from_utf8(&bytes)
+            .expect("os dados Unicode de case folding devem ser UTF-8")
             .lines()
             .filter(|line| !line.starts_with('#') && !line.is_empty())
             .filter_map(|line| {
