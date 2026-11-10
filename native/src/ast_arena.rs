@@ -1,6 +1,6 @@
 // Stable node and child-list identities for the mutating ast.ts passes.
-use crate::ast::AstNode;
-use std::collections::HashMap;
+use crate::{ast::AstNode, id_hasher::IdHasher};
+use std::{collections::HashMap, hash::BuildHasherDefault};
 
 pub(crate) type NodeId = usize;
 pub(crate) type GroupId = usize;
@@ -14,7 +14,7 @@ pub(crate) struct Node {
 pub(crate) struct Arena {
     pub nodes: Vec<Node>,
     pub groups: Vec<Vec<NodeId>>,
-    declarations: HashMap<usize, NodeId>,
+    declarations: HashMap<usize, NodeId, BuildHasherDefault<IdHasher>>,
 }
 
 impl Arena {

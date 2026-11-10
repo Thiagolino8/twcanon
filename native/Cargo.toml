@@ -1,6 +1,6 @@
 [package]
 name = "tailwind-canonical-native"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 rust-version = "1.99"
 license = "MIT"
@@ -12,9 +12,10 @@ path = "src/cli/main.rs"
 
 [dependencies]
 indexmap = { version = "2", features = ["serde"] }
-icu_collator = "2"
+# A API de colação raiz é instável entre versões menores.
+icu_collator = { version = "=2.4.0", features = ["unstable"] }
 icu_locale_core = "2"
-regex = "1"
+regex = { package = "regex-lite", version = "0.1.9" }
 ryu-js = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -23,12 +24,36 @@ regress = { path = "vendor/regress/regress-0.12.0", features = ["utf16", "prohib
 oxc_allocator = "=0.157.0"
 oxc_ast = "=0.157.0"
 oxc_ast_visit = "=0.157.0"
-oxc_parser = "=0.157.0"
+oxc_parser = { version = "=0.157.0", default-features = false }
 oxc_span = "=0.157.0"
 compact_str = { version = "=0.10.0", features = ["serde"] }
 sha2 = "0.10"
+miniz_oxide = "0.9"
+
+[build-dependencies]
+miniz_oxide = "0.9"
 
 [profile.release]
-lto = "thin"
+lto = "fat"
+opt-level = 3
 codegen-units = 1
 strip = true
+panic = "abort"
+
+[profile.release.package.oxc_parser]
+opt-level = "z"
+
+[profile.release.package.regress]
+opt-level = "s"
+
+[profile.release.package.serde_json]
+opt-level = "s"
+
+[profile.release.package.miniz_oxide]
+opt-level = "s"
+
+[profile.release.package.icu_collator]
+opt-level = "s"
+
+[profile.release.package.num-bigint]
+opt-level = "z"

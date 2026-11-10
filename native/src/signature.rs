@@ -38,8 +38,7 @@ static HEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?i)#(?:[a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})")
         .expect("constant hex color regex")
 });
-static COLLATION: LazyLock<Collation> =
-    LazyLock::new(|| Collation::new("en").expect("valid signature locale"));
+static COLLATION: LazyLock<Collation> = LazyLock::new(Collation::english);
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 struct ValueOptions {
@@ -216,7 +215,7 @@ impl Canonicalizer<'_> {
         } else {
             print::arbitrary_ast(&mut parsed)
         };
-        if !custom_property && !value.is_empty() {
+        if !custom_property && value.contains('#') {
             value = HEX
                 .replace_all(&value, |capture: &regex::Captures<'_>| {
                     capture[0].to_ascii_lowercase()

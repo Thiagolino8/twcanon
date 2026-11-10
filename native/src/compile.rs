@@ -23,8 +23,12 @@ use std::{
 };
 
 static PROPERTY_ORDER: LazyLock<HashMap<String, usize>> = LazyLock::new(|| {
-    let properties: Vec<String> = serde_json::from_str(include_str!("../data/property-order.json"))
-        .expect("vendored property order");
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/property-order.json.deflate"
+    )))
+    .expect("ordem de propriedades incorporada deve descomprimir");
+    let properties: Vec<String> = serde_json::from_slice(&bytes).expect("vendored property order");
     let mut order = HashMap::with_capacity(properties.len());
     for (index, property) in properties.into_iter().enumerate() {
         order.entry(property).or_insert(index);

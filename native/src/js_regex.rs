@@ -18,8 +18,12 @@ struct Identifiers {
 }
 
 static IDENTIFIERS: LazyLock<Identifiers> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../data/js-regex-unicode.json"))
-        .expect("pinned V8 identifier ranges")
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/js-regex-unicode.json.deflate"
+    )))
+    .expect("intervalos Unicode incorporados devem descomprimir");
+    serde_json::from_slice(&bytes).expect("pinned V8 identifier ranges")
 });
 
 fn identifier(code: u32, start: bool) -> bool {

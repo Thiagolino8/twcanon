@@ -51,8 +51,13 @@ struct Description {
 }
 
 static DEFINITIONS: LazyLock<IndexMap<String, Vec<Definition>>> = LazyLock::new(|| {
-    let data: Data = serde_json::from_str(include_str!("../data/completions.json"))
-        .expect("pinned completion descriptions must be valid");
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/completions.json.deflate"
+    )))
+    .expect("descrições de sugestões incorporadas devem descomprimir");
+    let data: Data =
+        serde_json::from_slice(&bytes).expect("pinned completion descriptions must be valid");
     let mut definitions: IndexMap<String, Vec<Definition>> = IndexMap::new();
     for registration in data.registrations {
         definitions
@@ -92,7 +97,13 @@ pub(crate) fn resolve(theme: &Theme, namespaces: &[String]) -> Vec<String> {
     theme
         .keys_in_namespaces(namespaces)
         .into_iter()
-        .map(|value| LEGACY_NUMERIC_KEY.replace_all(&value, "$1.$2").into_owned())
+        .map(|value| {
+            if value.contains('_') {
+                LEGACY_NUMERIC_KEY.replace_all(&value, "$1.$2").into_owned()
+            } else {
+                value
+            }
+        })
         .collect()
 }
 

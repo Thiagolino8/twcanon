@@ -224,7 +224,7 @@ impl Canonicalizer {
         } else {
             let mut result: IndexSet<_> = candidates.iter().cloned().collect();
             let mut drop = IndexSet::new();
-            let collation = Collation::new("en-US")?;
+            let collation = Collation::english();
             for indexes in &plan.unique {
                 for positions in Combinations::new(indexes.len()) {
                     let combo: Vec<_> = positions

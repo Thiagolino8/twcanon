@@ -35,8 +35,12 @@ enum Operation {
 }
 
 static BUILTINS: LazyLock<Builtins> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../data/variants.json"))
-        .expect("pinned variant definitions must be valid")
+    let bytes = miniz_oxide::inflate::decompress_to_vec(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/variants.json.deflate"
+    )))
+    .expect("falha ao descomprimir as definições de variantes");
+    serde_json::from_slice(&bytes).expect("pinned variant definitions must be valid")
 });
 
 #[derive(Clone, Debug)]
