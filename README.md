@@ -74,7 +74,7 @@ O comportamento de referência é Tailwind CSS **4.3.4** e, para expressões reg
 
 A suíte diferencial preserva os resultados da referência. Casos amostrados não provam equivalência geral. O contrato do motor de regex e seus limites estão em [docs/compatibility.md](docs/compatibility.md).
 
-Há pacotes para Linux x64/arm64 (glibc e musl), macOS x64/arm64 e Windows x64/arm64. As releases só são publicadas após build e teste de instalação de todos os alvos. Linux glibc requer 2.39 ou superior nos artefatos gerados pelo CI; os binários musl são treinados e testados também em Alpine. A versão mínima de macOS usada para compilação é 13.0.
+Há pacotes para Linux x64/arm64 (glibc e musl), macOS x64/arm64 e Windows x64/arm64. As releases só são publicadas após build e teste de instalação de todos os alvos. Os binários Linux usam mimalloc para reduzir o custo de alocação na canonicalização; em execuções pequenas ou com cache quente, o allocator pode usar mais memória. Linux glibc requer 2.39 ou superior nos artefatos gerados pelo CI; os binários musl são treinados e testados também em Alpine. A versão mínima de macOS usada para compilação é 13.0.
 
 ## Desenvolvimento
 
