@@ -1,5 +1,9 @@
 #![forbid(unsafe_code)]
 
+#[cfg(target_os = "linux")]
+#[global_allocator]
+static ALLOCATOR: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 mod extraction;
 mod files;
 mod rewrites;
